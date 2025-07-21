@@ -12,12 +12,11 @@ const app=express();
 const server=http.createServer(app);
 
 //intialize socket.io server
-const allowedOrigins = ["https://yourdomain.com", "https://anotherdomain.com"];
+//const allowedOrigins = ["https://yourdomain.com", "https://anotherdomain.com"];
+
 export const io=new Server(server,{
     cors:{
-        origin: allowedOrigins,
-        methods: ["GET", "POST"],
-        credentials: true
+        origin: "*"
     }
 })
 
