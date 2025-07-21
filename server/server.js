@@ -14,6 +14,8 @@ const server=http.createServer(app);
 //intialize socket.io server
 //const allowedOrigins = ["https://yourdomain.com", "https://anotherdomain.com"];
 
+const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:3000"];
+
 export const io=new Server(server,{
     cors:{
         origin: allowedOrigins,
