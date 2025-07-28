@@ -44,6 +44,7 @@ io.on("connection",(socket)=>{
     io.emit("getOnlineUsers",Object.keys(userSocketMap))
    })
 })
+console.log("CORS Allowed Origin:", process.env.CLIENT_URL);
 
 app.use(express.json({ limit: "4mb" }));
 app.use(express.urlencoded({ extended: true }));
