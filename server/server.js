@@ -14,7 +14,7 @@ const server=http.createServer(app);
 //intialize socket.io server
 //const allowedOrigins = ["https://yourdomain.com", "https://anotherdomain.com"];
 
-const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:3000"];
+const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
 
 export const io=new Server(server,{
     cors:{
@@ -23,6 +23,7 @@ export const io=new Server(server,{
     credentials: true,
     }
 })
+
 
 //store online users
 export const userSocketMap={};//{userId:socketId}
@@ -44,15 +45,25 @@ io.on("connection",(socket)=>{
    })
 })
 
-
+app.use(express.json({ limit: "4mb" }));
+app.use(express.urlencoded({ extended: true }));
 
 //middleware setup
-app.use(express.json({limit:"4mb"}))
-app.use(cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-    credentials: true
-}))//restricts CORS to allowed domains
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true
+};
+
+
+// Apply CORS middleware globally
+app.use(cors(corsOptions));//restricts CORS to allowed domains
 
 //Routes setup
 app.use("/api/status",(req,res)=>res.send("Server is live"));
@@ -65,12 +76,15 @@ await connectDB();
 
 
 
-
+if(process.env.NODE_ENV!="production"){
 const PORT=process.env.PORT|| 5000;
 
-server.listen(PORT,()=>{
+server.listen(PORT,()=>
     console.log(`Server is running on PORT:${PORT}`)
-});
+);
+}
+
+
 
 
 //export  server for vercel
