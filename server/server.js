@@ -12,10 +12,7 @@ const app=express();
 const server=http.createServer(app);
 
 //intialize socket.io server
-//const allowedOrigins = ["https://yourdomain.com", "https://anotherdomain.com"];
-
-//const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
-const allowedOrigins = [process.env.CLIENT_URL .split(",")];
+const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
 
 export const io=new Server(server,{
     cors:{
@@ -66,16 +63,12 @@ const corsOptions = {
 
 // Apply CORS middleware globally
 app.use(cors(corsOptions));//restricts CORS to allowed domains
-app.options('*', cors(corsOptions)); // Allow preflight for all routes
 //Routes setup
-console.log("Loading Routes...");
 
-try {
-  app.use("/api/auth", userRouter);
-  app.use("/api/messages", messageRouter);
-} catch (err) {
-  console.error("Error while setting up routes:", err);
-}
+app.use("/api/status",(req,res)=>res.send("Server is live"));
+app.use("/api/auth",userRouter)
+app.use("/api/messages",messageRouter)
+
 
 //connect to mongodb
 await connectDB();
